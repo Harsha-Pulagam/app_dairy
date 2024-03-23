@@ -1,0 +1,8 @@
+torch
+transfomers
+accelerate
+fastapi
+uvicorn
+flash-attn --no-build-isolation
+pyannote.audio
+torchaudio

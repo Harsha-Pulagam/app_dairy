@@ -1,0 +1,5 @@
+# Ignore model directory
+model/
+
+# Ignore __pycache__ directory
+__pycache__/
