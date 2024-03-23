@@ -1,8 +1,8 @@
 torch
-transfomers
+transformers
 accelerate
 fastapi
 uvicorn
-flash-attn --no-build-isolation
+flash-attn
 pyannote.audio
 torchaudio

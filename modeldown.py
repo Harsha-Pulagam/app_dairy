@@ -1,7 +1,7 @@
 import torch
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 
-"""
+
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
@@ -18,4 +18,4 @@ save_dir = "model/wishper"
 
 model.save_pretrained(save_dir)
 processor.save_pretrained(save_dir)
-"""
+

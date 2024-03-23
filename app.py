@@ -19,10 +19,11 @@ async def home():
 async def fielpath(path:str):
   try:
     input_text = path
-    res = inference.trascribe(input_text)
+    res = inference.calling_fuction(input_text)
     return res
   except Exception as e:
     logging.error("Something went wrong")
+    
     
 app.include_router(router)
 
