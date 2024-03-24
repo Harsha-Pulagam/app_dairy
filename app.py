@@ -16,9 +16,9 @@ async def home():
   return {"message": "Machine Learning service"}
 
 @router.post("/wishper")
-async def fielpath(path:str):
+async def fielpath(data: dict):
   try:
-    input_text = path
+    input_text = data["audio_path"]
     res = inference.calling_fuction(input_text)
     return res
   except Exception as e:

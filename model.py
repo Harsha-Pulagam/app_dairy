@@ -9,7 +9,7 @@ class Model:
         pass
     
     def load_model():
-        model = AutoModelForSpeechSeq2Seq.from_pretrained("model/wishper",
+        model = AutoModelForSpeechSeq2Seq.from_pretrained("openai/whisper-large-v3",
                                                     torch_dtype=torch.float16,
                                                     attn_implementation="flash_attention_2",
                                                     use_safetensors=True,
@@ -19,7 +19,7 @@ class Model:
         return model
 
     def load_tokenizer():
-        processor = AutoProcessor.from_pretrained("model/wishper")
+        processor = AutoProcessor.from_pretrained("openai/whisper-large-v3")
         return processor
     
     def pyannote_pipeline():

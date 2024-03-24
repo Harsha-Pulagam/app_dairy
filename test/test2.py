@@ -11,13 +11,15 @@ pipeline = Pipeline.from_pretrained(
 import torch
 
 io = Audio(mono="downmix", sample_rate=16000)
-waveform ,sample_rate = io("audio.wav")
+waveform ,sample_rate = io("audio1.wav")
 pipeline.to(torch.device("cuda:0"))
 print(torch.device("cuda"))
 
 
 # apply pretrained pipeline
 diarization = pipeline({"waveform": waveform, "sample_rate": sample_rate})
+#diarization = pipeline("audio1.wav")
+#print(diarization)
 
 segments = []
 for segment, track, label in diarization.itertracks(yield_label=True):
@@ -48,15 +50,17 @@ new_segments.append(
         "speaker": prev_segment["label"],
     }
 )
+
+
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 
 
 model = AutoModelForSpeechSeq2Seq.from_pretrained(
-    "model/wishper", torch_dtype=torch.float16, low_cpu_mem_usage=True, use_safetensors=True,use_flash_attention_2=True
+    "openai/whisper-large-v3", torch_dtype=torch.float16, low_cpu_mem_usage=True, use_safetensors=True,use_flash_attention_2=True
 )
 model.to("cuda:0")
 
-processor = AutoProcessor.from_pretrained("model/wishper")
+processor = AutoProcessor.from_pretrained("openai/whisper-large-v3")
 
 pipe = pipeline(
     "automatic-speech-recognition",
@@ -72,11 +76,13 @@ pipe = pipeline(
     device="cuda:0"
 )
 
-result = pipe("audio.wav")
+result = pipe("audio1.wav")
 transcript = result["chunks"]
 
 # get the end timestamps for each chunk from the ASR output
 end_timestamps = np.array([chunk["timestamp"][-1] for chunk in transcript])
+print(len(end_timestamps))
+print(len(new_segments))
 segmented_preds = []
 
 # align the diarizer timestamps and the ASR timestamps
@@ -84,6 +90,7 @@ for segment in new_segments:
     # get the diarizer end timestamp
     end_time = segment["segment"]["end"]
     # find the ASR end timestamp that is closest to the diarizer's end timestamp and cut the transcript to here
+    print(end_timestamps, end_time)
     upto_idx = np.argmin(np.abs(end_timestamps - end_time))
 
     if group_by_speaker:
@@ -111,9 +118,9 @@ def format_as_transcription(raw_segments):
     
     return "\n\n".join(
         [
-            chunk["speaker"] + " " + tuple_to_string(chunk["timestamp"]) + chunk["text"]
+            ("Doctor: " if chunk["speaker"] == "SPEAKER_00" else "Patient: ") + chunk["text"]
             for chunk in raw_segments
         ]
     )
 
-format_as_transcription(segmented_preds)
+result = format_as_transcription(segmented_preds)
