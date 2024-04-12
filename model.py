@@ -24,5 +24,5 @@ class Model:
     
     def pyannote_pipeline():
         pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1",
-                                        use_auth_token="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").to(torch.device("cuda:0"))
+                                        use_auth_token="").to(torch.device("cuda:0"))
         return pipeline
